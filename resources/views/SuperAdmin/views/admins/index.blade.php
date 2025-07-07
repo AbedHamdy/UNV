@@ -66,9 +66,14 @@
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="6" style="text-align:center; color:#c0392b; padding:22px;">No admins found.</td>
-                        </tr>
+                        <div style="background: linear-gradient(to left, #c0392b 80%, #333 100%); color: #fff; padding: 18px 24px; border-radius: 6px; text-align:center;">
+                            No admins found, create admin first
+                            <br><br>
+                            <a href="{{ route('create_admin') }}" 
+                            style="display:inline-block; background:linear-gradient(to left,#43a047 80%, #222 100%); color:#fff; padding:10px 24px; border-radius:5px; font-weight:bold; text-decoration:none; font-size:1.08rem; margin-top:12px; box-shadow:0 2px 8px rgba(44,62,80,0.08); transition:background 0.2s;">
+                                + Create Admin
+                            </a>
+                        </div>
                     @endforelse
                 </tbody>
             </table>

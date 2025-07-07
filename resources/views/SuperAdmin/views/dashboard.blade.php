@@ -2,6 +2,12 @@
 @section('title', 'Dashboard')
 @section('content')
     <div class="content" id="mainContent">
+        @if (session('success'))
+            <div class="dashboard-alert dashboard-alert-success" id="success-alert">
+                <span class="alert-text">{{ session('success') }}</span>
+                <button class="alert-close" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+        @endif
         {{-- <div id="dashboard-alert" class="dashboard-alert">
             <span class="alert-text">
                 <svg width="20" height="20" style="vertical-align:middle; margin-left:6px" fill="#fff"

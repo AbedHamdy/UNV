@@ -39,6 +39,8 @@
                                 <td style="color:#111; padding:10px 8px; text-align:center; vertical-align:middle;">{{ $category->created_at->format('Y-m-d') }}</td>
                                 <td style="padding:10px 8px; text-align:center; vertical-align:middle;">
                                     <div style="display: flex; justify-content: center; align-items: center;">
+                                        <a href="{{ route("category_courses" , $category->id) }}" style="background:linear-gradient(to left,#111,#c0392b);color:#fff;padding:6px 14px;border-radius:4px;text-decoration:none;font-size:0.97rem; margin-right:7px;">Assign</a>
+                                        <a href="{{ route("category_courses_show" , $category->id) }}" style="background:linear-gradient(to left,#111,#c0392b);color:#fff;padding:6px 14px;border-radius:4px;text-decoration:none;font-size:0.97rem; margin-right:7px;">Info</a>
                                         <a href="{{ route("edit_category" , $category->id) }}" style="background:linear-gradient(to left,#111,#c0392b);color:#fff;padding:6px 14px;border-radius:4px;text-decoration:none;font-size:0.97rem; margin-right:7px;">Edit</a>
                                         <form action="{{ route("delete_category" , $category->id) }}" method="POST" style="display:inline;">
                                             @csrf

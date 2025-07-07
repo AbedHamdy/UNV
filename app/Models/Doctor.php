@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Admin extends Authenticatable
+class Doctor extends Authenticatable
 {
     use HasFactory;
 
@@ -14,12 +14,12 @@ class Admin extends Authenticatable
         'name',
         'email',
         'password',
-        "category_id",
-        "image",
+        'image',
+        'course_id',
     ];
 
-    public function category()
+    public function course()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Course::class);
     }
 }

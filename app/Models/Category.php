@@ -22,4 +22,9 @@ class Category extends Model
     {
         return $this->hasMany(Admin::class);
     }
+
+    public function courses()
+    {
+        return $this->hasMany(Course::class , "category_courses");
+    }
 }

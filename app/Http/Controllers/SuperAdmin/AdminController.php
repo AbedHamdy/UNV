@@ -23,7 +23,7 @@ class AdminController extends Controller
     {
         $admins = Admin::with('category')->paginate();
         // dd($admins);
-    
+
         return view("SuperAdmin.views.admins.index", compact("admins"));
     }
 
@@ -33,6 +33,11 @@ class AdminController extends Controller
     public function create()
     {
         $categories = Category::all();
+        if(!$categories)
+        {
+            return redirect()->route("create_category")->with("error" , "Create category first");
+        }
+
         return view("SuperAdmin.views.admins.create" , compact("categories"));
     }
 
@@ -181,7 +186,7 @@ class AdminController extends Controller
             {
                 $data['password'] = Hash::make($data['password']);
             }
-            else 
+            else
             {
                 unset($data['password']);
             }
@@ -219,9 +224,29 @@ class AdminController extends Controller
         $admin = Admin::find($id);
         if (!$admin)
         {
-            return redirect()->back()->with('error', 'Admin not found , please try again.');
+            return redirect()->back()->with('error', 'Admin not found.');
         }
-        $admin->delete();
-        return redirect()->route('all_admins')->with('success', 'Admin deleted successfully.');
+        DB::beginTransaction();
+        try
+        {
+            if ($admin->image && File::exists(public_path('images/admins/' . $admin->image)))
+            {
+                File::delete(public_path('images/admins/' . $admin->image));
+            }
+
+            $admin->delete();
+            GeneralPassword::where('accessible_type', Admin::class)
+                ->where('accessible_id', $admin->id)
+                ->delete();
+                
+            DB::commit();
+
+            return redirect()->route('all_admins')->with('success', 'Admin deleted successfully.');
+        }
+        catch (\Exception $e)
+        {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Something went wrong, please try again.');
+        }
     }
 }

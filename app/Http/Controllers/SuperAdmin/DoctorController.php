@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDoctorRequest;
+use App\Http\Requests\UpdateDoctorRequest;
 use App\Models\Course;
 use App\Models\Doctor;
 use App\Models\GeneralPassword;
@@ -121,11 +122,79 @@ class DoctorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function edit($id)
     {
-        //
+        $doctor = Doctor::find($id);
+        if(!$doctor)
+        {
+            return redirect()->back()->with("error" , "Doctor not found");
+        }
+
+        $courses = Course::all();
+
+        return view("SuperAdmin.views.doctors.edit" , compact("doctor" , "courses"));
     }
-    
+
+    public function update(UpdateDoctorRequest $request , $id)
+    {
+        $doctor = Doctor::find($id);
+        if(!$doctor)
+        {
+            return redirect()->back()->with("error" , "Doctor not found");
+        }
+
+        $data = $request->validated();
+        // $data["image"] = $request->hasFile('image');
+        // dd($data);
+        if($data["password"] == null)
+        {
+            unset($data["password"]);
+        }
+        else
+        {
+            $data["password"] = Hash::make($data["password"]);
+        }
+
+        DB::beginTransAction();
+        try
+        {
+            if ($request->hasFile('image'))
+            {
+                $image = $request->file('image');
+                $ext = $image->getClientOriginalExtension();
+                $newImage = time() . rand(10000, 50000) . "." . $ext;
+
+                $path = public_path('images/doctors');
+                if (!file_exists($path))
+                {
+                    mkdir($path, 0777, true);
+                }
+
+                $image->move($path, $newImage);
+                $data['image'] = $newImage;
+            }
+
+            $doctor = Doctor::where("id" , $id)->update($data);
+            if(!$doctor)
+            {
+                throw new \Exception('Failed to create general password , please try again/');
+            }
+
+            DB::commit();
+            return redirect()->route("all_doctors")->with("success" , "Doctor updated successfully");
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+            // if ($newImage && File::exists(public_path('images/doctors/' . $newImage)))
+            // {
+            //     File::delete(public_path('images/doctors/' . $newImage));
+            // }
+
+            return redirect()->back()->with('error', 'Something went wrong, please try again.');
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      */

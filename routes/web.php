@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Auth\GeneralPasswordController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Doctor\DashboardController as DoctorDashboardController;
+use App\Http\Controllers\Doctor\StudentsInCategoryController;
 use App\Http\Controllers\SuperAdmin\AdminController;
 use App\Http\Controllers\SuperAdmin\CategoryController;
 use App\Http\Controllers\SuperAdmin\CategoryCourseController;
@@ -38,6 +40,8 @@ Route::post("/general-password", [GeneralPasswordController::class, "check"])->n
 Route::get("/login/super/admin", [LoginController::class, "LoginSuperAdmin"])->name("login_SuperAdmin");
 // login admin
 Route::get("/login/admin", [LoginController::class, "LoginAdmin"])->name("login_Admin");
+// login doctor
+Route::get("/login/doctor", [LoginController::class, "LoginDoctor"])->name("login_Doctor");
 
 // check Credential
 Route::post("/login/check", [LoginController::class, "checkCredential"])->name("check_credential");
@@ -114,4 +118,16 @@ Route::middleware(['auth:Admin'])->group(function () {
     // Enrollment
     Route::post("/dashboard/admin/student/enrollment", [EnrollmentController::class, "create"])->name("enrollment");
     Route::post("/dashboard/admin/student/enrollment/store", [EnrollmentController::class, "store"])->name("store_enrollment");
+
+    // logout
+    Route::post('/logout/admin', [LoginController::class, 'logoutAdmin'])->name('logout_Admin');
+});
+
+// Doctor
+Route::middleware(["auth:Doctor"])->group(function(){
+    Route::get("/dashboard/doctor", [\App\Http\Controllers\Doctor\DashboardController::class, "index"])->name("dashboard_Doctor");
+
+    // students in soecial category
+    Route::get("/dashboard/doctor/{id}/students", [StudentsInCategoryController::class, "index"])->name("all_students");
+    Route::put("/dashboard/doctor/edit/grade/student/{id}", [StudentsInCategoryController::class, "update"])->name("update_grade");
 });

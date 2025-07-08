@@ -43,11 +43,11 @@
                 <label style="color:#e67e22; font-weight:500; display:block; margin-bottom:10px;">
                     Select Courses:
                 </label>
-
+                {{-- @dd($courses) --}}
                 @forelse($courses as $course)
                     <div style="margin-bottom: 10px;">
                         <label style="display: flex; align-items: center; color: #eee;">
-                            <input type="checkbox" name="courses[]" value="{{ $course->id }}"
+                            <input type="checkbox" name="courses[]" value="{{ $course->course_id }}"
                                 style="margin-right: 10px;">
                             {{ $course->course->name }}
                         </label>

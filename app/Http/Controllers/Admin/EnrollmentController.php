@@ -10,6 +10,7 @@ use App\Models\CourseStudent;
 use App\Models\SemesterStudent;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class EnrollmentController extends Controller
@@ -78,6 +79,8 @@ class EnrollmentController extends Controller
             ->first();
 
         $data["semester_id"] = $semester->semester_id;
+        $admin = Auth::guard("Admin")->user();
+        $data["category_id"] = $admin->category_id;
         // $existingEnrollments = CourseStudent::where('student_id', $data['student_id'])
         //     ->where('semester_id', $data["semester_id"])
         //     ->exists();
@@ -93,10 +96,11 @@ class EnrollmentController extends Controller
         {
             foreach($data["courses"] as $course)
             {
-                // dd($course);
+                // dd($data["courses"]);
                 $enrollment = CourseStudent::create([
                     "student_id" => $data["student_id"],
                     "semester_id" => $data["semester_id"],
+                    "category_id" => $data["category_id"],
                     "course_id" => $course,
                 ]);
 
@@ -112,7 +116,7 @@ class EnrollmentController extends Controller
         catch(\Exception $e)
         {
             DB::rollback();
-            return redirect()->route("dashboard_Admin")->with('error', 'Something went wrong , please try again.' . $e->getMessage());
+            return redirect()->route("dashboard_Admin")->with('error', 'Something went wrong , please try again.');
         }
     }
 
